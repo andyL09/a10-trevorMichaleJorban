@@ -141,6 +141,40 @@ def polar_radius(matches: List[str]) -> List[str]:
     return [get_polar_radius(matches[0])]
 
 
+
+"NEW STUFF"
+def get_everything(thing: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(thing)))
+    return infobox_text
+def everything(matches: List[str]) -> List[str]:
+    return [get_everything(matches[0])]
+
+#Coordinates([\dNEWS\.\/\s\-;]+)
+def get_coordinates(place: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(place)))
+    pattern = r"Coordinates(?P<coord>[\dNEWS\.\/\s\-;]+)"
+    error_text = (
+        "No coordinate information found in correct format"
+    )
+    match = get_match(infobox_text, pattern, error_text)
+
+    return match.group("coord")
+def coordinates(matches: List[str]) -> List[str]:
+    return [get_coordinates(matches[0])]
+
+def get_website(org: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(org)))
+    pattern = r"Website(?P<site>www\.[\w\d]+.[\w]{3})"
+    error_text = (
+        "No website information found in correct format"
+    )
+    match = get_match(infobox_text, pattern, error_text)
+
+    return match.group("site")
+def website(matches: List[str]) -> List[str]:
+    return [get_website(matches[0])]
+
+
 # dummy argument is ignored and doesn't matter
 def bye_action(dummy: List[str]) -> None:
     raise KeyboardInterrupt
@@ -156,6 +190,9 @@ Action = Callable[[List[str]], List[Any]]
 pa_list: List[Tuple[Pattern, Action]] = [
     ("when was % born".split(), birth_date),
     ("what is the polar radius of %".split(), polar_radius),
+    ("tell me everything about %".split(), everything),
+    ("what are the coordinates of %".split(), coordinates),
+    ("what is the website for %".split(), website),
     (["bye"], bye_action),
 ]
 
