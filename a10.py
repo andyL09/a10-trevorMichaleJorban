@@ -174,6 +174,18 @@ def get_website(org: str) -> str:
 def website(matches: List[str]) -> List[str]:
     return [get_website(matches[0])]
 
+def get_gdp(org: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(org)))
+    pattern = r"(?P<gdp>GDP.*)Gini"
+    error_text = (
+        "No GDP information found in correct format"
+    )
+    match = get_match(infobox_text, pattern, error_text)
+
+    return match.group("gdp")
+def gdp(matches: List[str]) -> List[str]:
+    return [get_gdp(matches[0])]
+
 
 # dummy argument is ignored and doesn't matter
 def bye_action(dummy: List[str]) -> None:
@@ -193,6 +205,7 @@ pa_list: List[Tuple[Pattern, Action]] = [
     ("tell me everything about %".split(), everything),
     ("what are the coordinates of %".split(), coordinates),
     ("what is the website for %".split(), website),
+    ("what is the gdp of %".split(), gdp),
     (["bye"], bye_action),
 ]
 
@@ -221,7 +234,7 @@ def search_pa_list(src: List[str]) -> List[str]:
 def query_loop() -> None:
     """The simple query loop. The try/except structure is to catch Ctrl-C or Ctrl-D
     characters and exit gracefully"""
-    print("Welcome to the movie database!\n")
+    print("Welcome to the wikipedia database!\n")
     while True:
         try:
             print()
